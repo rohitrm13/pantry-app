@@ -1,4 +1,5 @@
 "use client"; // Add this directive at the top
+import styles from "./page.module.css";
 import { Box, Stack, Typography, Button, TextField} from "@mui/material";
 import { collection, getDocs,doc,setDoc,deleteDoc,getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react"; // Import useEffect from React
@@ -68,79 +69,50 @@ export default function Home() {
     await updatePantry()
   }
   return (
-    <Box
-      width= "100vw" 
-      height= "100vh"
-      display= {"flex"} 
-      justifyContent= {"center"}
-      alignItems= {"center"}
-      flexDirection= {"column"}
-      gap={2}
-
-    >
+    <Box className={styles.container}>
       <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Box className={styles.modalContainer}>
+          <Typography id="modal-modal-title" className={styles.modalTitle} component="h2">
             Add Item
           </Typography>
-          <Stack direction={"row"} spacing={2} width={"100%"}>
-            <TextField id="outlined-basic" label="Item" variant="outlined" fullWidth value={itemname} onChange={(e) => setItemname(e.target.value)}/>
-            <Button variant="contained"
-            onClick={() =>{
-              addItem(itemname)
-              setItemname('')
-              handleClose()
-              
-            }}
-            >Add</Button>
+          <Stack className={styles.modalStack}>
+            <TextField id="outlined-basic" label="Item" variant="outlined" fullWidth value={itemname} onChange={(e) => setItemname(e.target.value)} />
+            <Button className={styles.modalButton}
+              onClick={() => {
+                addItem(itemname);
+                setItemname('');
+                handleClose();
+              }}
+            >
+              Add
+            </Button>
           </Stack>
         </Box>
       </Modal>
-      <Button variant="contained" onClick={handleOpen}>Add</Button>
-      <Box 
-        border= {"1px solid #333"}
-      >
-        <Box
-          width={"800px"} 
-          height={"100px"}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"} 
-          bgcolor={"#90EE90"}
-          border={"1px solid #333"}
-          >
-            <Typography variant={"h1"} color={'#333'} textAlign={'center'}>
-              Pantry items
-            </Typography>
+      <Button className={styles.addButton} onClick={handleOpen}>Add</Button>
+      <Box className={styles.pantryBox}>
+        <Box className={styles.pantryHeader}>
+          <Typography className={styles.pantryTitle}>
+            Pantry items
+          </Typography>
         </Box>
-        <Stack width={"800px"} height={"200px"} spacing={2} overflow={'auto'}>
-          {pantry.map(({name, count}) => (
-            <Box
-              key={name}
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              width={"100%"}
-              height={"100%"}
-              bgcolor={"#f0f0f0"}
-              paddingX={5}
-            >
-              <Typography variant={"h3"} color={'#333'} textAlign={'center'}>
+        <Stack className={styles.pantryList}>
+          {pantry.map(({ name, count }) => (
+            <Box className={styles.pantryItem} key={name}>
+              <Typography className={styles.itemName}>
                 {name.charAt(0).toUpperCase() + name.slice(1)}
               </Typography>
-              <Typography variant={"h3"} color={'#333'} textAlign={'center'}>
-                Quantity:{count}
+              <Typography className={styles.itemCount}>
+                Quantity: {count}
               </Typography>
-              <Button variant="contained" onClick={() => removeItem(name)}>Remove</Button>
-              
+              <Button className={styles.removeButton} onClick={() => removeItem(name)}>Remove</Button>
             </Box>
           ))}
-
         </Stack>
       </Box>
     </Box>
