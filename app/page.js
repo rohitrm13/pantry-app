@@ -1,19 +1,19 @@
 "use client"; // Add this directive at the top
 import styles from "./page.module.css";
-import { Box, Stack, Typography, Button, TextField} from "@mui/material";
-import { collection, getDocs,doc,setDoc,deleteDoc,getDoc } from "firebase/firestore";
+import { Box, Stack, Typography, Button, TextField } from "@mui/material";
+import { collection, getDocs, doc, setDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react"; // Import useEffect from React
 import { db } from "../firebase"; // Adjust the import to use the correct export
 import Modal from '@mui/material/Modal';
 import { query } from "firebase/firestore";
 require('dotenv').config()
 
-
 export default function Home() {
   const [pantry, setPantry] = useState([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   const style = {
     position: 'absolute',
     top: '50%',
@@ -28,46 +28,57 @@ export default function Home() {
     flexDirection: 'column',
     gap: 2
   };
-  const [itemname, setItemname] = useState('');
-  const updatePantry = async () => {
-      const pantryRef = query(collection(db, 'pantry'));
-      const pantrySnapshot = await getDocs(pantryRef);
-      const pantryList = []
-      pantrySnapshot.forEach((doc) => {
-        pantryList.push({name:doc.id, ...doc.data()})
-      });
-      console.log(pantryList)
-      setPantry(pantryList)
 
-    }
-  useEffect(() => {
-    updatePantry()
-  }, []
-  )
-  const addItem = async () => {
-    const pantryRef = doc(collection(db, 'pantry'), itemname)
-    const docSnap = await getDoc(pantryRef);
-    if (docSnap.exists()) {
-      const {count} = docSnap.data()
-      await setDoc(pantryRef, {count: count + 1})
-    }else{
-      await setDoc(pantryRef, {count: 1})
-    }
-    await updatePantry()
+  const [itemName, setItemName] = useState('');
+  const [itemQuantity, setItemQuantity] = useState('');
+
+  const updatePantry = async () => {
+    const pantryRef = query(collection(db, 'pantry'));
+    const pantrySnapshot = await getDocs(pantryRef);
+    const pantryList = [];
+    pantrySnapshot.forEach((doc) => {
+      pantryList.push({ name: doc.id, ...doc.data() });
+    });
+    console.log(pantryList);
+    setPantry(pantryList);
   }
-  const removeItem = async (item) => {
-    const pantryRef = doc(collection(db, 'pantry'), item)
+
+  useEffect(() => {
+    updatePantry();
+  }, []);
+
+  const addItem = async () => {
+    const quantity = parseInt(itemQuantity);
+    if (!itemName || isNaN(quantity) || quantity <= 0) {
+      alert("Please enter a valid item name and quantity");
+      return;
+    }
+
+    const pantryRef = doc(collection(db, 'pantry'), itemName);
     const docSnap = await getDoc(pantryRef);
     if (docSnap.exists()) {
-      const {count} = docSnap.data()
-      if (count === 1){
-        await deleteDoc(pantryRef)
-      }else{
-        await setDoc(pantryRef, {count: count - 1})
+      const { count } = docSnap.data();
+      await setDoc(pantryRef, { count: count + quantity });
+    } else {
+      await setDoc(pantryRef, { count: quantity });
+    }
+    await updatePantry();
+  }
+
+  const removeItem = async (item) => {
+    const pantryRef = doc(collection(db, 'pantry'), item);
+    const docSnap = await getDoc(pantryRef);
+    if (docSnap.exists()) {
+      const { count } = docSnap.data();
+      if (count === 1) {
+        await deleteDoc(pantryRef);
+      } else {
+        await setDoc(pantryRef, { count: count - 1 });
       }
     }
-    await updatePantry()
+    await updatePantry();
   }
+
   return (
     <Box className={styles.container}>
       <Modal
@@ -81,11 +92,13 @@ export default function Home() {
             Add Item
           </Typography>
           <Stack className={styles.modalStack}>
-            <TextField id="outlined-basic" label="Item" variant="outlined" fullWidth value={itemname} onChange={(e) => setItemname(e.target.value)} />
+            <TextField id="item-name" label="Item" variant="outlined" fullWidth value={itemName} onChange={(e) => setItemName(e.target.value)} />
+            <TextField id="item-quantity" label="Quantity" variant="outlined" fullWidth value={itemQuantity} onChange={(e) => setItemQuantity(e.target.value)} type="number" />
             <Button className={styles.modalButton}
               onClick={() => {
-                addItem(itemname);
-                setItemname('');
+                addItem();
+                setItemName('');
+                setItemQuantity('');
                 handleClose();
               }}
             >
@@ -116,5 +129,5 @@ export default function Home() {
         </Stack>
       </Box>
     </Box>
-  )
+  );
 }
