@@ -9,7 +9,9 @@
     align-items: center;
     flex-direction: column;
     gap: 20px;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
+    padding: 20px;
+    box-sizing: border-box;
   }
   
   /* Modal styles */
@@ -18,7 +20,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
+    width: 90%;
+    max-width: 400px;
     background-color: #ffffff;
     border: 2px solid #000;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -36,7 +39,7 @@
   
   .modalStack {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 10px;
   }
   
@@ -64,7 +67,8 @@
   .pantryBox {
     border: 1px solid #333;
     background-color: #ffffff;
-    width: 800px;
+    width: 90%;
+    max-width: 800px;
     padding: 20px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
@@ -72,7 +76,7 @@
   
   .pantryHeader {
     width: 100%;
-    height: 100px;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,14 +86,16 @@
   }
   
   .pantryTitle {
-    font-size: 36px;
+    font-size: 24px;
     color: #ffffff;
     text-align: center;
+    padding: 0 10px;
+    box-sizing: border-box;
   }
   
   .pantryList {
     width: 100%;
-    height: 200px;
+    max-height: 200px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -102,36 +108,85 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 50px;
+    height: auto;
     background-color: #f0f0f0;
     padding: 10px 20px;
     border-radius: 5px;
   }
   
   .itemName {
-    font-size: 24px;
+    font-size: 18px;
     color: #333;
-    text-align: center;
+    flex: 1;
   }
   
   .itemCount {
-    font-size: 24px;
+    font-size: 18px;
     color: #333;
+    flex: 1;
     text-align: center;
   }
   
   .removeButton {
     background-color: #dc3545;
     color: #ffffff;
-    font-size: 18px;
+    font-size: 14px;
     padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    flex: 0 0 auto;
   }
   
   .removeButton:hover {
     background-color: #c82333;
+  }
+  
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .modalStack {
+      flex-direction: column;
+    }
+  
+    .pantryTitle {
+      font-size: 20px;
+    }
+  
+    .itemName,
+    .itemCount {
+      font-size: 16px;
+    }
+  
+    .removeButton {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modalTitle {
+      font-size: 20px;
+    }
+  
+    .addButton {
+      font-size: 16px;
+      padding: 8px 16px;
+    }
+  
+    .removeButton {
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+  
+    .pantryItem {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  
+    .itemName,
+    .itemCount {
+      font-size: 14px;
+    }
   }
   

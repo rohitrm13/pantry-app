@@ -11,6 +11,9 @@ require('dotenv').config()
 export default function Home() {
   const [pantry, setPantry] = useState([]);
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [filteredPantry, setFilteredPantry] = useState([]); // State for filtered pantry items
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -19,7 +22,8 @@ export default function Home() {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '90%',
+    maxWidth: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -41,6 +45,7 @@ export default function Home() {
     });
     console.log(pantryList);
     setPantry(pantryList);
+    setFilteredPantry(pantryList); // Update filtered pantry list
   }
 
   useEffect(() => {
@@ -79,6 +84,21 @@ export default function Home() {
     await updatePantry();
   }
 
+  const handleSearch = () => {
+    if (searchQuery.trim() === '') {
+      setFilteredPantry(pantry);
+    } else {
+      const filteredItems = pantry.filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredPantry(filteredItems);
+    }
+  };
+
+  useEffect(() => {
+    setFilteredPantry(pantry);
+  }, [pantry]);
+
   return (
     <Box className={styles.container}>
       <Modal
@@ -107,6 +127,22 @@ export default function Home() {
           </Stack>
         </Box>
       </Modal>
+      <Box className={styles.searchContainer}>
+        <TextField 
+          id="search-query" 
+          label="Search" 
+          variant="outlined" 
+          fullWidth 
+          value={searchQuery} 
+          onChange={(e) => setSearchQuery(e.target.value)} 
+        />
+        <Button 
+          className={styles.searchButton} 
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+      </Box>
       <Button className={styles.addButton} onClick={handleOpen}>Add</Button>
       <Box className={styles.pantryBox}>
         <Box className={styles.pantryHeader}>
@@ -115,7 +151,7 @@ export default function Home() {
           </Typography>
         </Box>
         <Stack className={styles.pantryList}>
-          {pantry.map(({ name, count }) => (
+          {filteredPantry.map(({ name, count }) => (
             <Box className={styles.pantryItem} key={name}>
               <Typography className={styles.itemName}>
                 {name.charAt(0).toUpperCase() + name.slice(1)}
