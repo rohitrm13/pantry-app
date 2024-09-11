@@ -1,168 +1,129 @@
-"use client"; // Add this directive at the top
+"use client";
 import styles from "./page.module.css";
-import { Box, Stack, Typography, Button, TextField } from "@mui/material";
-import { collection, getDocs, doc, setDoc, deleteDoc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react"; // Import useEffect from React
-import { db } from "../firebase"; // Adjust the import to use the correct export
-import Modal from '@mui/material/Modal';
-import { query } from "firebase/firestore";
-require('dotenv').config()
+import { Box, Stack, Typography, Button, TextField, Divider } from "@mui/material";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { doSignInWithEmailAndPassword, doSignInWithGoogle, doCreateUserWithEmailAndPassword } from './firebase/auth';
+import { useAuth } from './contexts/authContext';
+import GoogleIcon from '@mui/icons-material/Google';
 
-export default function Home() {
-  const [pantry, setPantry] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
-  const [filteredPantry, setFilteredPantry] = useState([]); // State for filtered pantry items
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const { currentUser, userLoggedIn } = useAuth();
+  const router = useRouter();
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '90%',
-    maxWidth: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 2
-  };
-
-  const [itemName, setItemName] = useState('');
-  const [itemQuantity, setItemQuantity] = useState('');
-
-  const updatePantry = async () => {
-    const pantryRef = query(collection(db, 'pantry'));
-    const pantrySnapshot = await getDocs(pantryRef);
-    const pantryList = [];
-    pantrySnapshot.forEach((doc) => {
-      pantryList.push({ name: doc.id, ...doc.data() });
-    });
-    console.log(pantryList);
-    setPantry(pantryList);
-    setFilteredPantry(pantryList); // Update filtered pantry list
-  }
-
-  useEffect(() => {
-    updatePantry();
-  }, []);
-
-  const addItem = async () => {
-    const quantity = parseInt(itemQuantity);
-    if (!itemName || isNaN(quantity) || quantity <= 0) {
-      alert("Please enter a valid item name and quantity");
-      return;
-    }
-
-    const pantryRef = doc(collection(db, 'pantry'), itemName);
-    const docSnap = await getDoc(pantryRef);
-    if (docSnap.exists()) {
-      const { count } = docSnap.data();
-      await setDoc(pantryRef, { count: count + quantity });
-    } else {
-      await setDoc(pantryRef, { count: quantity });
-    }
-    await updatePantry();
-  }
-
-  const removeItem = async (item) => {
-    const pantryRef = doc(collection(db, 'pantry'), item);
-    const docSnap = await getDoc(pantryRef);
-    if (docSnap.exists()) {
-      const { count } = docSnap.data();
-      if (count === 1) {
-        await deleteDoc(pantryRef);
-      } else {
-        await setDoc(pantryRef, { count: count - 1 });
-      }
-    }
-    await updatePantry();
-  }
-
-  const handleSearch = () => {
-    if (searchQuery.trim() === '') {
-      setFilteredPantry(pantry);
-    } else {
-      const filteredItems = pantry.filter(item => 
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredPantry(filteredItems);
+  const handleLogin = async () => {
+    try {
+      await doSignInWithEmailAndPassword(email, password);
+      router.push('/home');
+    } catch (error) {
+      console.error("Error logging in with email and password", error);
+      alert(error.message);
     }
   };
 
-  useEffect(() => {
-    setFilteredPantry(pantry);
-  }, [pantry]);
+  const handleRegister = async () => {
+    try {
+      await doCreateUserWithEmailAndPassword(email, password);
+      router.push('/home');
+    } catch (error) {
+      console.error("Error registering with email and password", error);
+      alert(error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await doSignInWithGoogle();
+      router.push('/home');
+    } catch (error) {
+      console.error("Error logging in with Google", error);
+      alert(error.message);
+    }
+  };
+
+  if (userLoggedIn) {
+    router.push('/home');
+    return null;
+  }
 
   return (
-    <Box className={styles.container}>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box className={styles.modalContainer}>
-          <Typography id="modal-modal-title" className={styles.modalTitle} component="h2">
-            Add Item
+    <Box className={styles.pageContainer}>
+      <Box className={styles.leftContainer}>
+        <Box className={styles.myForm}>
+          <Typography variant="h5" textAlign={"center"} className={styles.welcomeMessage}>
+            {isRegistering ? "Join us today" : "Welcome back!"}
           </Typography>
-          <Stack className={styles.modalStack}>
-            <TextField id="item-name" label="Item" variant="outlined" fullWidth value={itemName} onChange={(e) => setItemName(e.target.value)} />
-            <TextField id="item-quantity" label="Quantity" variant="outlined" fullWidth value={itemQuantity} onChange={(e) => setItemQuantity(e.target.value)} type="number" />
-            <Button className={styles.modalButton}
-              onClick={() => {
-                addItem();
-                setItemName('');
-                setItemQuantity('');
-                handleClose();
-              }}
-            >
-              Add
-            </Button>
+          <Typography variant="body1" textAlign={"center"} className={styles.subMessage}>
+            Enter to get access to PantryProAI.
+          </Typography>
+
+          <Stack spacing={2} className={styles.textField}>
+            <TextField
+              id="email"
+              label="Email"
+              variant="outlined"
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              id="password"
+              label="Password"
+              variant="outlined"
+              fullWidth
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </Stack>
+
+          <Box className={styles.options}>
+            <Button
+              variant="contained"
+              fullWidth
+              className={styles.myFormButton}
+              onClick={isRegistering ? handleRegister : handleLogin}
+            >
+              {isRegistering ? "Sign Up" : "Log In"}
+            </Button>
+          </Box>
+
+          <Divider className={styles.divider}>Or Login with</Divider>
+
+          <Box className={styles.socialsRow}>
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<GoogleIcon />}
+              onClick={handleGoogleLogin}
+              className={styles.socialButton}
+            >
+              Sign in with Google
+            </Button>
+          </Box>
+
+          <Box className={styles.myFormActions}>
+            <Typography>
+              {isRegistering ? "Already have an account?" : "Don't have an account?"}{" "}
+              <Button
+                color="primary"
+                onClick={() => setIsRegistering(!isRegistering)}
+                className={styles.toggleButton}
+              >
+                {isRegistering ? "Login" : "Register here"}
+              </Button>
+            </Typography>
+          </Box>
         </Box>
-      </Modal>
-      <Box className={styles.searchContainer}>
-        <TextField 
-          id="search-query" 
-          label="Search" 
-          variant="outlined" 
-          fullWidth 
-          value={searchQuery} 
-          onChange={(e) => setSearchQuery(e.target.value)} 
-        />
-        <Button 
-          className={styles.searchButton} 
-          onClick={handleSearch}
-        >
-          Search
-        </Button>
       </Box>
-      <Button className={styles.addButton} onClick={handleOpen}>Add</Button>
-      <Box className={styles.pantryBox}>
-        <Box className={styles.pantryHeader}>
-          <Typography className={styles.pantryTitle}>
-            Pantry items
-          </Typography>
-        </Box>
-        <Stack className={styles.pantryList}>
-          {filteredPantry.map(({ name, count }) => (
-            <Box className={styles.pantryItem} key={name}>
-              <Typography className={styles.itemName}>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </Typography>
-              <Typography className={styles.itemCount}>
-                Quantity: {count}
-              </Typography>
-              <Button className={styles.removeButton} onClick={() => removeItem(name)}>Remove</Button>
-            </Box>
-          ))}
-        </Stack>
+      <Box className={styles.rightContainer}>
+        <Typography variant="h1" className={styles.companyName}>
+          PantryProAI
+        </Typography>
+        {/* <img src="/PantryLogo.png" alt="PantryProAI" className={styles.logo} /> */}
       </Box>
     </Box>
   );

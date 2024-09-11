@@ -1,192 +1,251 @@
-/* page.module.css */
+/*CSS for the landing page */
+.pageContainer {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f2f5;
+  flex-direction: row;
+}
 
-/* Container styles */
-.container {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Left section styling */
+.leftContainer {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-color: #ffffff;
+}
+
+/* Right section styling */
+.rightContainer {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #5A67D8, #805AD5); /* Gradient background */
+  color: white;
+}
+
+/* Form container */
+.myForm {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+}
+
+/* Welcome and sub message styling */
+.welcomeMessage {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.subMessage {
+  font-size: 14px;
+  color: #777;
+  margin-top: 10px;
+}
+
+/* Input field styling */
+.pageContainer .textField {
+  margin-top: 20px;
+}
+
+/* Button styling */
+.pageContainer .myFormButton {
+  margin-top: 20px;
+  background-color: #5A67D8;
+  color: white;
+  &:hover {
+    background-color: #434190;
+  }
+}
+
+.pageContainer .options {
+  margin-top: 10px;
+}
+
+.pageContainer .divider {
+  margin: 20px 0;
+  width: 100%;
+  text-align: center;
+  color: #777;
+}
+
+/* Social button */
+.pageContainer .socialButton {
+  margin-top: 10px;
+}
+
+.pageContainer .socialButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pageContainer .socialButton:hover {
+  background-color: #b4b3b3;
+}
+
+/* Register/Login toggle */
+.pageContainer .myFormActions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pageContainer .toggleButton {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #5A67D8;
+}
+
+/* Company name styling on the right */
+.pageContainer .companyName {
+  font-size: 50px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .pageContainer{
     flex-direction: column;
-    gap: 20px;
-    background-color: #ffffff;
-    padding: 20px;
-    box-sizing: border-box;
   }
-  
-  /* Modal styles */
-  .modalContainer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 400px;
-    background-color: #ffffff;
-    border: 2px solid #000;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .modalTitle {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-  
-  .modalStack {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .modalButton {
-    flex: 1;
-  }
-  
-  /* Add Button */
-  .addButton {
-    background-color: #007bff;
-    color: #ffffff;
-    font-size: 18px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .addButton:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Pantry Box styles */
-  .pantryBox {
-    border: 1px solid #333;
-    background-color: #ffffff;
-    width: 90%;
-    max-width: 800px;
-    padding: 20px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-  }
-  
-  .pantryHeader {
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #28a745;
-    border: 1px solid #333;
-    border-radius: 5px 5px 0 0;
-  }
-  
-  .pantryTitle {
-    font-size: 24px;
-    color: #ffffff;
-    text-align: center;
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-  
-  .pantryList {
-    width: 100%;
-    max-height: 200px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-  
-  .pantryItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+  .leftContainer,
+  .rightContainer {
     width: 100%;
     height: auto;
-    background-color: #f0f0f0;
-    padding: 10px 20px;
-    border-radius: 5px;
   }
-  
-  .itemName {
-    font-size: 18px;
-    color: #333;
-    flex: 1;
+
+  .rightContainer{
+    height: auto;
+    padding: 20px;
+    order: -1;
   }
-  
-  .itemCount {
-    font-size: 18px;
-    color: #333;
-    flex: 1;
+
+  .leftContainer {
+    padding: 20px;
+  }
+
+  .myForm {
+    padding: 20px;
+    max-width: 300px;
+  }
+
+  .welcomeMessage {
+    font-size: 24px;
+  }
+
+  .pageContainer .companyName {
+    font-size: 40px;
+  }
+
+  /* Main Content */
+  .mainContent {
+    flex-grow: 1;
+    padding-top: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* For better contrast */
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageContainer {
+    flex-direction: column;
+  }
+
+  .leftContainer, 
+  .rightContainer {
+    width: 100%;
+    height: auto;
+  }
+
+  .rightContainer {
+    height: auto;
+    padding: 20px;
+    order: -1; /* Move the right container to the top */
+  }
+
+  .leftContainer {
+    padding: 15px;
+  }
+
+  .myForm {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .welcomeMessage {
+    font-size: 22px;
+  }
+
+  .subMessage {
+    font-size: 12px;
+  }
+
+  .myFormButton {
+    padding: 10px;
+  }
+
+  .pageContainer .companyName {
+    font-size: 32px;
     text-align: center;
   }
-  
+
+  .container .title {
+    font-size: 2.0rem; /* Even smaller font size on very small screens */
+  }
+
+  .pantryBox {
+    padding: 5px; /* Reduced padding */
+  }
+
+  .pantryList {
+    max-height: 200px; /* Increased height for better scrolling */
+  }
+
+  .pantryItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 5px; /* Reduced padding */
+  }
+
+  .itemName, .itemCount {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
   .removeButton {
-    background-color: #dc3545;
-    color: #ffffff;
-    font-size: 14px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    flex: 0 0 auto;
+    align-self: flex-end;
   }
-  
-  .removeButton:hover {
-    background-color: #c82333;
+
+  .mainContent {
+    padding-top: 35px; /* Reduced padding */
+    padding-left: 5px; /* Reduced padding */
+    padding-right: 5px;
   }
-  
-  /* Media Queries */
-  @media (max-width: 768px) {
-    .modalStack {
-      flex-direction: column;
-    }
-  
-    .pantryTitle {
-      font-size: 20px;
-    }
-  
-    .itemName,
-    .itemCount {
-      font-size: 16px;
-    }
-  
-    .removeButton {
-      font-size: 14px;
-    }
+
+  .modalContainer {
+    width: 90%; /* Full width */
+    max-width: 90%; /* Removed fixed max-width */
+    padding: 15px; /* Reduced padding */
   }
-  
-  @media (max-width: 480px) {
-    .modalTitle {
-      font-size: 20px;
-    }
-  
-    .addButton {
-      font-size: 16px;
-      padding: 8px 16px;
-    }
-  
-    .removeButton {
-      font-size: 12px;
-      padding: 5px 8px;
-    }
-  
-    .pantryItem {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
-  
-    .itemName,
-    .itemCount {
-      font-size: 14px;
-    }
+
+  .addButton, .searchButton {
+    padding: 8px 15px; /* Reduced button padding */
+    font-size: 1rem; /* Slightly smaller font size */
   }
-  
+}
